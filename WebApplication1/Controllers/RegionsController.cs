@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
+using WebApplication1.Contracts;
 using WebApplication1.Data;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
@@ -9,19 +12,24 @@ namespace WebApplication1.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class RegionsController : ControllerBase
-    { //readonly é usado para declarar campos que só podem ser atribuidos na inicialização do objeto(Constructor)
-        private readonly NZWalksDbContext dbContext;
-        public RegionsController(NZWalksDbContext dbContext)
+    {
+
+        private readonly IRegionRepository regionRepository;
+        public RegionsController(IRegionRepository regionRepository)
         {
-            this.dbContext = dbContext;
+
+            this.regionRepository = regionRepository;
+
         }
 
         [HttpGet]
-        public IActionResult GetAllRegions()
+        public async Task<IActionResult> GetAll()
         {
-            //We are getting the data from DB - the domain model
-            var regionsDomain = dbContext.Regions.ToList();
-
+            var regionsDomain = await regionRepository.GetAllAsync();
+            if (regionsDomain == null)
+            {
+                return NotFound();
+            }
             var regionsDTO = new List<RegionDTO>();
             foreach (var regionDomain in regionsDomain)
             {
@@ -35,18 +43,15 @@ namespace WebApplication1.Controllers
             return Ok(regionsDTO);
         }
 
-
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult getById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomain = await regionRepository.GetByIdAsync(id);
             if (regionDomain == null)
             {
                 return NotFound();
             }
-
-            //We are creating a regionDTO using the regionDomain to send to the user
             var regionDTO = new RegionDTO()
             {
                 Code = regionDomain.Code,
@@ -56,19 +61,32 @@ namespace WebApplication1.Controllers
             return Ok(regionDTO);
         }
 
-
         [HttpPost]
-        public IActionResult Create([FromBody] RegionDTO regionDTO)
+        public async Task<IActionResult> Create([FromBody] RegionDTO regionDTO)
         {
             var regionDomain = new Region()
             {
-                Code = regionDTO.Code,
                 Name = regionDTO.Name,
+                Code = regionDTO.Code,
                 RegionImageUrl = regionDTO.RegionImageUrl
             };
-            dbContext.Regions.Add(regionDomain);
-            dbContext.SaveChanges(); //gera o id automaticamente, só o id
-            return CreatedAtAction(nameof(getById), new { id = regionDomain.Id }, regionDTO);
+            regionDomain = await regionRepository.CreateAsync(regionDomain); //o CreateAsync adicionou o id. Não precisa atribuir a variável, mas achei mais explicitamente melhor
+
+            return CreatedAtAction(nameof(GetById), new { id = regionDomain.Id }, regionDTO);
+        }
+
+       
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var regionDomain = await regionRepository.DeleteAsync(id);
+            if (regionDomain == null)
+            {
+                return NotFound();
+            }
+            return Ok();
         }
     }
 }
