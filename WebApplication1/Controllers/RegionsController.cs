@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
+using WebApplication1.CustomActionFilters;
 using WebApplication1.Contracts;
-using WebApplication1.Data;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 
@@ -15,7 +11,6 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-
         private readonly IRegionRepository _regionRepository;
         private readonly IMapper _mapper;
         public RegionsController(IRegionRepository regionRepository, IMapper mapper)
@@ -48,27 +43,29 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO regionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(regionRequestDTO);
-            regionDomain = await _regionRepository.CreateAsync(regionDomain); //o CreateAsync adicionou o id. Não precisa atribuir a variável, mas achei mais explicitamente melhor
+            await _regionRepository.CreateAsync(regionDomain);
             var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
             return CreatedAtAction(nameof(GetById), new { id = regionDomain.Id }, regionDTO);
         }
 
-
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(updateRegionRequestDTO);
-            if(regionDomain == null)
+            if (regionDomain == null)
             {
                 return NotFound();
             }
-            regionDomain = await _regionRepository.UpdateAsync(id,regionDomain);
+            regionDomain = await _regionRepository.UpdateAsync(id, regionDomain);
             var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
             return Ok(regionDTO);
+
         }
 
 

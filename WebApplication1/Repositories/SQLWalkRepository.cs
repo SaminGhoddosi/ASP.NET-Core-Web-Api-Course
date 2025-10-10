@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Contracts;
 using WebApplication1.Data;
+using WebApplication1.Mappings;
 using WebApplication1.Models.Domain;
+using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Repositories
 {
@@ -21,7 +24,18 @@ namespace WebApplication1.Repositories
 
         public async Task<Walk> UpdateAsync(Guid id, Walk newWalk)
         {
-            
+            var existingWalk = await _dbContext.Walks.FirstOrDefaultAsync(x => x.id == id);
+            if(existingWalk == null)
+            {
+                return null;
+            }
+            existingWalk.Name = newWalk.Name;
+            existingWalk.Description = newWalk.Description;
+            existingWalk.LengthInKm = newWalk.LengthInKm;
+            existingWalk.WalkImageUrl = newWalk.WalkImageUrl;
+            existingWalk.region = newWalk.region;
+            await _dbContext.SaveChangesAsync();
+            return existingWalk;
         }
         
 
@@ -30,5 +44,22 @@ namespace WebApplication1.Repositories
             return await _dbContext.Walks.Include(x => x.region).ToListAsync();
         }
 
+        public async Task<Walk?> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Walks.Include(x => x.region).FirstOrDefaultAsync(x => x.id == id);
+        }
+
+        public async Task<Walk?> DeleteAsync(Guid id)
+        {
+            var walkDomain = await _dbContext.Walks.FirstOrDefaultAsync(x => x.id == id);
+            if(walkDomain == null)
+            {
+                return null;
+            }
+            _dbContext.Walks.Remove(walkDomain);
+            await _dbContext.SaveChangesAsync();
+            return walkDomain;
+
+        }
     }
 }
