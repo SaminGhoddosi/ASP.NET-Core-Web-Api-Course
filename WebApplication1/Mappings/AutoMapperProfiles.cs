@@ -14,6 +14,8 @@ namespace WebApplication1.Mappings
             CreateMap<Walk, AddWalkRequestDTO>().ReverseMap();
             CreateMap<Walk, WalkDTO>().ReverseMap();
             CreateMap<Walk, UpdateWalkRequestDTO>().ReverseMap();
+            CreateMap<Difficulty, DifficultyDTO>().ReverseMap();
+            CreateMap<Difficulty, GenericDifficultyRequestDTO>().ReverseMap();
         }
     }
 }

@@ -19,6 +19,8 @@ namespace WebApplication1.Models.DTO
         public double LengthInKm { get; set; }
         public string? WalkImageUrl { get; set; }
         [Required]
+        public Guid DifficultyId { get; set; }
+        [Required]
         public Guid RegionId { get; set; }
 
     }

@@ -5,6 +5,7 @@ using WebApplication1.CustomActionFilters;
 using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
+using System.Diagnostics;
 
 namespace WebApplication1.Controllers
 {
@@ -29,11 +30,20 @@ namespace WebApplication1.Controllers
             return CreatedAtAction(nameof(GetById), new { id = walkDomain.id }, walkDTO);
 
         }
-
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [Route("{name:string}")]//por que não tem string?
+        public async Task<IActionResult> FindByName([FromRoute]string name, [FromQuery] string? sortBy = null, [FromQuery] bool isAscending = true, [FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 1)
         {
-            var walksDomain = await _walkRepository.GetAllAsync();
+            var walks = await _walkRepository.GetByNameAsync(name, sortBy, isAscending, pageSize, pageNumber);
+            var walksDTO = _mapper.Map<List<WalkDTO>>(walks);
+            return Ok(walksDTO);
+        }
+        //GET: /api/walks?filterOn=Name&filterQuery=Park&SortBy=Name&isAscending=true&pageNumber=1&pageSize=10
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool isAscending = true,//não é null porque é true or false
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {//fromquery is to acess infomartions and frombody is to modify, create, etc.
+            var walksDomain = await _walkRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
             var walksDTO = _mapper.Map<List<WalkDTO>>(walksDomain); //não precisa criar Map de List, ele faz sozinho
             return Ok(walksDTO);
         }
