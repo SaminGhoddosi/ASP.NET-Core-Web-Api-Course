@@ -4,11 +4,13 @@ using WebApplication1.CustomActionFilters;
 using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;

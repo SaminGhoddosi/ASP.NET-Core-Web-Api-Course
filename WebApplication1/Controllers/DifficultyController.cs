@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Contracts;
 using WebApplication1.CustomActionFilters;
@@ -9,6 +10,7 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DifficultyController : ControllerBase
     {
         private readonly IMapper _mapper;

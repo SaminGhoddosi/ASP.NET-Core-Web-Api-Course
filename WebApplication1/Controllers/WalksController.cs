@@ -6,11 +6,13 @@ using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WalksController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -31,7 +33,7 @@ namespace WebApplication1.Controllers
 
         }
         [HttpGet]
-        [Route("{name:string}")]//por que não tem string?
+        [Route("{name}")]//por que não tem string? Porque não é uma constraint
         public async Task<IActionResult> FindByName([FromRoute]string name, [FromQuery] string? sortBy = null, [FromQuery] bool isAscending = true, [FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 1)
         {
             var walks = await _walkRepository.GetByNameAsync(name, sortBy, isAscending, pageSize, pageNumber);
