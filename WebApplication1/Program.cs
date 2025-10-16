@@ -7,8 +7,6 @@ using WebApplication1.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using System.Web.Mvc;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +22,23 @@ builder.Services.AddDbContext<NZWalksAuthDBContext>(options => options.UseSqlSer
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 builder.Services.AddScoped<IDifficultyRepository, SQLDifficultyRepository>();
-builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));     //gera token temporário no sistema                                   //Define qual DbContect armazena os dados do Entity
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => x.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateActor = true,
+    ValidateIssuer = true,
+    ValidateLifetime = true,
+    ValidAudience = builder.Configuration["Jwt:Audience"],
+    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+});
 
 
+//sistema de login ->
+//gera token temporário no sistema                                   //Define qual DbContect armazena os dados do Entity
 builder.Services.AddIdentityCore<IdentityUser>().AddRoles<IdentityRole>().AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("NzWalks").AddEntityFrameworkStores<NZWalksAuthDBContext>()
     .AddDefaultTokenProviders(); //addiciona tokens padrões(como email, phonenumber)       //DataProtector                          //nome único para identificar o meu provedor
+
 //senha do usuário //usar o option quando for configurar o JWT
 builder.Services.Configure<IdentityOptions>(options =>
 {                         //classe que vai definir como o sistema de identidade vai se comportar
@@ -39,23 +49,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 });
-
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateActor = true,
-        ValidateLifetime = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    });
-
-
+//token provider -> gera token único que vai te permitir resetar, validar senha, conta, etc. 
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

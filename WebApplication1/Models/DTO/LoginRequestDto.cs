@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class RegisterRequestDto
+    public class LoginRequestDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -10,12 +10,5 @@ namespace WebApplication1.Models.DTO
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        [Required]
-        public List<Roles> Roles { get; set; }
-    }
-    public enum Roles
-    {
-        Reader,
-        Writer
     }
 }

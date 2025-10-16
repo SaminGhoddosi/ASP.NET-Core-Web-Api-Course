@@ -6,34 +6,30 @@ namespace WebApplication1.Data
 {
     public class NZWalksAuthDBContext : IdentityDbContext
     {
-        public NZWalksAuthDBContext(DbContextOptions<NZWalksAuthDBContext> options): base(options)
-        {
-        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            var readerRoleId = "13316700-024f-48af-a64d-5a85a857d181";
-            var readerConcurrencyStamp = "f180e25f-639d-4467-9c16-2688d018e167";
-            var writerRoleId = "c2645047-12c6-43c5-bb04-5967f7b41fcb";
-            var writerConcurrencyStamp = "d1a29dee-611f-4eb7-a211-b997753d316b";
-            var roles = new List<IdentityRole>
-            {
+            var writerId = "2842f6df-58e8-44d6-b91f-1afdda788125";
+            var writerConcurrencyStamp = "a6f6e946-bec2-4678-8e45-252ef8dd44c5";
+            var readerId = "6d537cfb-6c4e-423a-bc6f-d3f3c65dc3d6";
+            var readerConcurrencyStamp = "40f21b5e-01bf-44d6-bed5-69673f4fb66e";
+            var roles = new List<IdentityRole>(){
                 new IdentityRole
                 {
-                    Id = readerRoleId,
-                    Name = "Reader",
-                    NormalizedName = "Reader".ToUpper(),
-                    ConcurrencyStamp = readerConcurrencyStamp
-                },
-                new IdentityRole
-                {
-                    Id = writerRoleId,
+                    Id = writerId,
                     Name = "Writer",
                     NormalizedName = "Writer".ToUpper(),
                     ConcurrencyStamp = writerConcurrencyStamp
+
+                },
+                new IdentityRole
+                {
+                    Id = readerId,
+                    Name = "Reader",
+                    NormalizedName = "Reader".ToUpper(),
+                    ConcurrencyStamp = readerConcurrencyStamp
                 }
             };
-            builder.Entity<IdentityRole>().HasData(roles);
         }
     }
 }
