@@ -5,6 +5,6 @@ namespace WebApplication1.Contracts
 {
     public interface ITokenRepository
     {
-        public string CreateJWTToken(IdentityUser user, List<Roles> roles);
+        public string CreateJWTToken(IdentityUser user, List<string> roles);
     }
 }

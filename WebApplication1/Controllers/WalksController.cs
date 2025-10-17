@@ -12,7 +12,6 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class WalksController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -24,6 +23,7 @@ namespace WebApplication1.Controllers
         }
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
         {
             var walkDomain = _mapper.Map<Walk>(addWalkRequestDTO);
@@ -34,6 +34,7 @@ namespace WebApplication1.Controllers
         }
         [HttpGet]
         [Route("{name}")]//por que não tem string? Porque não é uma constraint
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<IActionResult> FindByName([FromRoute]string name, [FromQuery] string? sortBy = null, [FromQuery] bool isAscending = true, [FromQuery] int pageSize = 10, [FromQuery] int pageNumber = 1)
         {
             var walks = await _walkRepository.GetByNameAsync(name, sortBy, isAscending, pageSize, pageNumber);
@@ -42,6 +43,7 @@ namespace WebApplication1.Controllers
         }
         //GET: /api/walks?filterOn=Name&filterQuery=Park&SortBy=Name&isAscending=true&pageNumber=1&pageSize=10
         [HttpGet]
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] string? sortBy = null, [FromQuery] bool isAscending = true,//não é null porque é true or false
             [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {//fromquery is to acess infomartions and frombody is to modify, create, etc.
@@ -51,6 +53,7 @@ namespace WebApplication1.Controllers
         }
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var walkDomain = await _walkRepository.GetByIdAsync(id);
@@ -66,6 +69,7 @@ namespace WebApplication1.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDTO updateWalkResponse)
         {
             var walkDomain = _mapper.Map<Walk>(updateWalkResponse);
@@ -81,6 +85,7 @@ namespace WebApplication1.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var walkDomain = await _walkRepository.DeleteAsync(id);

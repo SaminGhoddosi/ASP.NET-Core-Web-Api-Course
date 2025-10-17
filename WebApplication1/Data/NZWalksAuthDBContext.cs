@@ -6,6 +6,9 @@ namespace WebApplication1.Data
 {
     public class NZWalksAuthDBContext : IdentityDbContext
     {
+        public NZWalksAuthDBContext(DbContextOptions<NZWalksAuthDBContext> dbContextOptions) : base(dbContextOptions)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -13,7 +16,8 @@ namespace WebApplication1.Data
             var writerConcurrencyStamp = "a6f6e946-bec2-4678-8e45-252ef8dd44c5";
             var readerId = "6d537cfb-6c4e-423a-bc6f-d3f3c65dc3d6";
             var readerConcurrencyStamp = "40f21b5e-01bf-44d6-bed5-69673f4fb66e";
-            var roles = new List<IdentityRole>(){
+            var roles = new List<IdentityRole>()
+            {
                 new IdentityRole
                 {
                     Id = writerId,
@@ -30,6 +34,10 @@ namespace WebApplication1.Data
                     ConcurrencyStamp = readerConcurrencyStamp
                 }
             };
+            builder.Entity<IdentityRole>().HasData(roles);
+
+
         }
     }
 }
+

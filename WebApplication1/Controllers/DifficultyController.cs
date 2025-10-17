@@ -10,7 +10,6 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class DifficultyController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -21,6 +20,7 @@ namespace WebApplication1.Controllers
             _difficultyRepository = difficultyRepository;
         }
         [HttpGet]
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<IActionResult> GetAll()
         {
             var difficultiesDomain = await _difficultyRepository.GetAllAsync();
@@ -29,6 +29,7 @@ namespace WebApplication1.Controllers
         }
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Reader, Writer")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var difficultyDomain = await _difficultyRepository.GetByIdAsync(id);
@@ -41,6 +42,7 @@ namespace WebApplication1.Controllers
         }
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] GenericDifficultyRequestDTO genericDifficultyRequestDTO)
         {
             var difficultyDomain = _mapper.Map<Difficulty>(genericDifficultyRequestDTO);
@@ -51,6 +53,7 @@ namespace WebApplication1.Controllers
         [HttpPut]
         [Route("{id:guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenericDifficultyRequestDTO genericDifficultyRequestDTO)
         {
             var difficultyDomain = _mapper.Map<Difficulty>(genericDifficultyRequestDTO);
@@ -64,6 +67,8 @@ namespace WebApplication1.Controllers
         }
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Writer")]
+
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var difficultyDomain = await _difficultyRepository.DeleteAsync(id);

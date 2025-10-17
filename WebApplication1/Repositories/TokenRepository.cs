@@ -17,12 +17,11 @@ namespace WebApplication1.Repositories
         {
             _configuration = configuration;
         }
-        public string CreateJWTToken(IdentityUser user, List<Roles> roles)
-        {   
+        public string CreateJWTToken(IdentityUser user, List<string> roles)
+        {
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            var rolesString = roles.Select(x => x.ToString());
-            foreach (var role in rolesString)
+            foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }                                           //tradutor universal de texto
@@ -32,7 +31,7 @@ namespace WebApplication1.Repositories
                _configuration["Jwt:Issuer"],//Payload
                 _configuration["Jwt:Audience"],//Payload
                 claims,//Payload
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.Now.AddMinutes(15),//Payload
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

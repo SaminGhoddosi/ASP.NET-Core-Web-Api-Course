@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Contracts;
 using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Controllers
@@ -9,9 +10,11 @@ namespace WebApplication1.Controllers
     public class AuthController : ControllerBase //é uma classe que gerencia tudo relacionado a usuários
     {                           //foi registrado o UserManeger lá no identityCore
         private readonly UserManager<IdentityUser> _userManager;
-        public AuthController(UserManager<IdentityUser> userManager) //usa internamente o AuthDbContext
+        private readonly ITokenRepository _tokenRepository;
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository) //usa internamente o AuthDbContext
         {
             _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
         [HttpPost]
         [Route("Register")]
@@ -49,7 +52,17 @@ namespace WebApplication1.Controllers
                 var checkPassword = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
                 if (checkPassword == true)
                 {
-                    return Ok();
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles != null)
+                    {
+                        var token = _tokenRepository.CreateJWTToken(user, roles.ToList());
+                        var response = new LoginResponseDto
+                        {
+                            JwtToken = token
+                        };
+                        return Ok(response);
+                    }
+
                 }
             }
             return BadRequest("Email or password incorrect"); //poderia ser específico, mostrando se é email ou senha errada, mas isso é menos seguro

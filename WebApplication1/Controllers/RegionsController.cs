@@ -10,7 +10,6 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
@@ -24,6 +23,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Writer, Reader")]
         public async Task<IActionResult> GetAll()
         {
             var regionsDomain = await _regionRepository.GetAllAsync();
@@ -33,6 +33,7 @@ namespace WebApplication1.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer, Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var regionDomain = await _regionRepository.GetByIdAsync(id);
@@ -46,6 +47,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO regionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(regionRequestDTO);
@@ -57,6 +59,7 @@ namespace WebApplication1.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(updateRegionRequestDTO);
@@ -73,6 +76,7 @@ namespace WebApplication1.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionDomain = await _regionRepository.DeleteAsync(id);
