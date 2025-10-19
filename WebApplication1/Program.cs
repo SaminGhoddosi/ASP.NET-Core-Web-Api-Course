@@ -8,10 +8,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using WebApplication1.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var logger = new LoggerConfiguration().MinimumLevel.Verbose()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/NzWaks_Log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -51,19 +60,23 @@ builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 builder.Services.AddScoped<IDifficultyRepository, SQLDifficultyRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => x.TokenValidationParameters = new TokenValidationParameters
-{
-    ValidateActor = true,
-    ValidateIssuer = true,
-    ValidateLifetime = true,
-    ValidAudience = builder.Configuration["Jwt:Audience"],
-    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-});
-
-
-//sistema de login ->
-//gera token temporário no sistema                                   //Define qual DbContect armazena os dados do Entity
+//adiciona authentication e usa jwt como sistema de autenticação
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//adicionar as instruções
+    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+    {
+        //validar quem fez o token
+        ValidateIssuer = true,
+        //validar se o token é válido para esta api dentro das apis do sistema
+        ValidateActor = true,
+        //verificar validade
+        ValidateLifetime = true,//.configuration é pegar lá do json settings
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        //symetric = mesma chave para criptografar e descriptografar
+        //Encoding.UTF8.GetBytes = converter o texto para bytes, que é usado para criptografia
+    });
 builder.Services.AddIdentityCore<IdentityUser>().AddRoles<IdentityRole>().AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("NzWalks").AddEntityFrameworkStores<NZWalksAuthDBContext>()
     .AddDefaultTokenProviders(); //addiciona tokens padrões(como email, phonenumber)       //DataProtector                          //nome único para identificar o meu provedor
 
@@ -77,9 +90,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 });
-//token provider -> gera token único que vai te permitir resetar, validar senha, conta, etc. 
+
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -87,8 +101,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
-
+//Autenticar antes de autorizar
 app.UseAuthentication();
 
 app.UseAuthorization();

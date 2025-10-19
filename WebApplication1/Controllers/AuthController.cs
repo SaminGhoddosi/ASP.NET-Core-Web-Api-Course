@@ -54,7 +54,7 @@ namespace WebApplication1.Controllers
                 {
                     var roles = await _userManager.GetRolesAsync(user);
                     if (roles != null)
-                    {
+                    {//IList and list
                         var token = _tokenRepository.CreateJWTToken(user, roles.ToList());
                         var response = new LoginResponseDto
                         {

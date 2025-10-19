@@ -5,6 +5,7 @@ using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace WebApplication1.Controllers
 {
@@ -14,11 +15,13 @@ namespace WebApplication1.Controllers
     {
         private readonly IRegionRepository _regionRepository;
         private readonly IMapper _mapper;
-        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
+        private readonly ILogger<RegionsController> _logger;
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper, ILogger<RegionsController> logger)
         {
 
             _regionRepository = regionRepository;
             _mapper = mapper;
+            _logger = logger;
 
         }
 
@@ -26,9 +29,20 @@ namespace WebApplication1.Controllers
         [Authorize(Roles = "Writer, Reader")]
         public async Task<IActionResult> GetAll()
         {
-            var regionsDomain = await _regionRepository.GetAllAsync();
-            var regionsDTO = _mapper.Map<List<RegionDTO>>(regionsDomain);
-            return Ok(regionsDTO);
+            try
+            {
+                _logger.LogInformation("GetAllRegions Action Method was invoked");
+
+                var regionsDomain = await _regionRepository.GetAllAsync();
+                var regionsDTO = _mapper.Map<List<RegionDTO>>(regionsDomain);
+                _logger.LogInformation($"Finished GetAllRegions with data: {JsonSerializer.Serialize(regionsDomain)}");
+                return Ok(regionsDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message); //o erro vai aparecer só para mim
+                throw;//encerra o programa
+            }
         }
 
         [HttpGet]
