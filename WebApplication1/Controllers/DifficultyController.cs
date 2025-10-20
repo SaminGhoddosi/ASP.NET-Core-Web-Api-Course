@@ -8,7 +8,7 @@ using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class DifficultyController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> GetAll()
         {
             var difficultiesDomain = await _difficultyRepository.GetAllAsync();
-            var difficultiesDTO = _mapper.Map<List<DifficultyDTO>>(difficultiesDomain);
+            var difficultiesDTO = _mapper.Map<List<DifficultyDtoV1>>(difficultiesDomain);
             return Ok(difficultiesDTO);
         }
         [HttpGet]
@@ -37,24 +37,24 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            var difficultyDTO = _mapper.Map<DifficultyDTO>(difficultyDomain);
+            var difficultyDTO = _mapper.Map<DifficultyDtoV1>(difficultyDomain);
             return Ok(difficultyDTO);
         }
         [HttpPost]
         [ValidateModel]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Create([FromBody] GenericDifficultyRequestDTO genericDifficultyRequestDTO)
+        public async Task<IActionResult> Create([FromBody] GenericDifficultyRequestDtoV1 genericDifficultyRequestDTO)
         {
             var difficultyDomain = _mapper.Map<Difficulty>(genericDifficultyRequestDTO);
             await _difficultyRepository.CreateAsync(difficultyDomain);
-            var difficultyDTO = _mapper.Map<DifficultyDTO>(difficultyDomain);
+            var difficultyDTO = _mapper.Map<DifficultyDtoV1>(difficultyDomain);
             return CreatedAtAction(nameof(GetById), new { id = difficultyDomain.Id }, difficultyDTO);
         }
         [HttpPut]
         [Route("{id:guid}")]
         [ValidateModel]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenericDifficultyRequestDTO genericDifficultyRequestDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GenericDifficultyRequestDtoV1 genericDifficultyRequestDTO)
         {
             var difficultyDomain = _mapper.Map<Difficulty>(genericDifficultyRequestDTO);
             if(difficultyDomain == null)
@@ -62,7 +62,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
             await _difficultyRepository.UpdateAsync(id, difficultyDomain);
-            var difficultyDTO = _mapper.Map<DifficultyDTO>(difficultyDomain);
+            var difficultyDTO = _mapper.Map<DifficultyDtoV1>(difficultyDomain);
             return Ok(difficultyDTO);
         }
         [HttpDelete]
@@ -76,7 +76,7 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            var difficultyDTO = _mapper.Map<DifficultyDTO>(difficultyDomain);
+            var difficultyDTO = _mapper.Map<DifficultyDtoV1>(difficultyDomain);
             return Ok(difficultyDTO);
         }
     }

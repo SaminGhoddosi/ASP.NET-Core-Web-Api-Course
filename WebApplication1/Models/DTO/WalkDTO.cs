@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class WalkDTO
+    public class WalkDtoV1
     {
         public Guid id { get; set; }
         public string Name { get; set; }
@@ -10,8 +10,8 @@ namespace WebApplication1.Models.DTO
         public double LengthInKm { get; set; }
         public string? WalkImageUrl { get; set; }
         public Guid DifficultyId { get; set; }
-        public DifficultyDTO Difficulty { get; set; }
+        public DifficultyDtoV1 Difficulty { get; set; }
         public Guid RegionId { get; set; }
-        public RegionDTO Region { get; set; }
+        public RegionDtoV1 Region { get; set; }
     }
 }

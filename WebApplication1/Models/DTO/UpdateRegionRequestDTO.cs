@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class UpdateRegionRequestDTO
+    public class UpdateRegionRequestDtoV1
     {
         [Required]
         [MaxLength(3, ErrorMessage = "Code has to be a maximum of 3 characters")]

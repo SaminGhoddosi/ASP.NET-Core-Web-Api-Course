@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class AddRegionRequestDTO
+    public class AddRegionRequestDtoV1
     {
         [Required]//tanto o back quanto o front fazem essa validação
         [MaxLength(3, ErrorMessage = "Code has to be a maximum of 3 characters")]

@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace WebApplication1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class RegionsController : ControllerBase
     {
@@ -29,20 +29,13 @@ namespace WebApplication1.Controllers
         [Authorize(Roles = "Writer, Reader")]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
                 _logger.LogInformation("GetAllRegions Action Method was invoked");
 
                 var regionsDomain = await _regionRepository.GetAllAsync();
-                var regionsDTO = _mapper.Map<List<RegionDTO>>(regionsDomain);
-                _logger.LogInformation($"Finished GetAllRegions with data: {JsonSerializer.Serialize(regionsDomain)}");
+                var regionsDTO = _mapper.Map<List<RegionDtoV1>>(regionsDomain);
+                _logger.LogInformation("Finished GetAllRegions with data: {RegionCount}", JsonSerializer.Serialize(regionsDTO));
                 return Ok(regionsDTO);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message); //o erro vai aparecer só para mim
-                throw;//encerra o programa
-            }
+            
         }
 
         [HttpGet]
@@ -55,18 +48,18 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
+            var regionDTO = _mapper.Map<RegionDtoV1>(regionDomain);
             return Ok(regionDTO);
         }
 
         [HttpPost]
         [ValidateModel]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Create([FromBody] AddRegionRequestDTO regionRequestDTO)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDtoV1 regionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(regionRequestDTO);
             await _regionRepository.CreateAsync(regionDomain);
-            var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
+            var regionDTO = _mapper.Map<RegionDtoV1>(regionDomain);
             return CreatedAtAction(nameof(GetById), new { id = regionDomain.Id }, regionDTO);
         }
 
@@ -74,7 +67,7 @@ namespace WebApplication1.Controllers
         [Route("{id:Guid}")]
         [ValidateModel]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDTO updateRegionRequestDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDtoV1 updateRegionRequestDTO)
         {
             var regionDomain = _mapper.Map<Region>(updateRegionRequestDTO);
             if (regionDomain == null)
@@ -82,7 +75,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
             regionDomain = await _regionRepository.UpdateAsync(id, regionDomain);
-            var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
+            var regionDTO = _mapper.Map<RegionDtoV1>(regionDomain);
             return Ok(regionDTO);
 
         }
@@ -98,7 +91,7 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            var regionDTO = _mapper.Map<RegionDTO>(regionDomain);
+            var regionDTO = _mapper.Map<RegionDtoV1>(regionDomain);
             return Ok(regionDTO);
         }
     }

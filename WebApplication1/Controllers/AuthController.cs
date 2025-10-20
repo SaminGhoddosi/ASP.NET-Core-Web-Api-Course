@@ -5,7 +5,7 @@ using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase //é uma classe que gerencia tudo relacionado a usuários
     {                           //foi registrado o UserManeger lá no identityCore
@@ -18,7 +18,7 @@ namespace WebApplication1.Controllers
         }
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDtoV1 registerRequestDto)
         {
             var identityUser = new IdentityUser
             {
@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDtoV1 loginRequestDto)
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDto.Email);
             if (user != null)
@@ -56,7 +56,7 @@ namespace WebApplication1.Controllers
                     if (roles != null)
                     {//IList and list
                         var token = _tokenRepository.CreateJWTToken(user, roles.ToList());
-                        var response = new LoginResponseDto
+                        var response = new LoginResponseDtoV1
                         {
                             JwtToken = token
                         };

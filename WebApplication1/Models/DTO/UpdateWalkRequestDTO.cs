@@ -5,7 +5,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class UpdateWalkRequestDTO
+    public class UpdateWalkRequestDtoV1
     {
         [Required]
         [MaxLength(3, ErrorMessage = "Name has to be a maximum of 3 characters")]

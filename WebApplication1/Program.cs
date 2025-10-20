@@ -11,18 +11,24 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using WebApplication1.Middlewares;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);//o que colocar no v1.
 
-var logger = new LoggerConfiguration().MinimumLevel.Verbose()
-    .WriteTo.Console()
+// Add services to the container.
+var logger = new LoggerConfiguration()
+    .WriteTo.Console() //Os logs vão ser enviados para o Console
     .WriteTo.File("Logs/NzWaks_Log.txt", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Information() // define o nível mínimo de log que será mostrado
     .CreateLogger();
-builder.Logging.ClearProviders();
+
+builder.Logging.ClearProviders(); //limpa os provedores padrão do ssit
 builder.Logging.AddSerilog(logger);
 
 
-
 builder.Services.AddControllers();
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -90,7 +96,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 });
-
 
 var app = builder.Build();
 

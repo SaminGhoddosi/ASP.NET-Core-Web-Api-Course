@@ -8,14 +8,14 @@ namespace WebApplication1.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Region, RegionDTO>().ReverseMap();
-            CreateMap<AddRegionRequestDTO, Region>().ReverseMap();
-            CreateMap<Region, UpdateRegionRequestDTO>().ReverseMap();
-            CreateMap<Walk, AddWalkRequestDTO>().ReverseMap();
-            CreateMap<Walk, WalkDTO>().ReverseMap();
-            CreateMap<Walk, UpdateWalkRequestDTO>().ReverseMap();
-            CreateMap<Difficulty, DifficultyDTO>().ReverseMap();
-            CreateMap<Difficulty, GenericDifficultyRequestDTO>().ReverseMap();
+            CreateMap<Region, RegionDtoV1>().ReverseMap();
+            CreateMap<AddRegionRequestDtoV1, Region>().ReverseMap();
+            CreateMap<Region, UpdateRegionRequestDtoV1>().ReverseMap();
+            CreateMap<Walk, AddWalkRequestDtoV1>().ReverseMap();
+            CreateMap<Walk, WalkDtoV1>().ReverseMap();
+            CreateMap<Walk, UpdateWalkRequestDtoV1>().ReverseMap();
+            CreateMap<Difficulty, DifficultyDtoV1>().ReverseMap();
+            CreateMap<Difficulty, GenericDifficultyRequestDtoV1>().ReverseMap();
         }
     }
 }

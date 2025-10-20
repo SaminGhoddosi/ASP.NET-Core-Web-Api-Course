@@ -2,7 +2,7 @@
 
 namespace WebApplication1.Models.DTO
 {
-    public class RegisterRequestDto
+    public class RegisterRequestDtoV1
     {
         [Required]
         [DataType(DataType.EmailAddress)]

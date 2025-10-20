@@ -16,24 +16,25 @@ namespace WebApplication1.Repositories
         {
             _configuration = configuration;
         }
+
         public string CreateJWTToken(IdentityUser user, List<string> roles)
         {
+            //header, payload, signature
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(//header(tipo de token)
-                _configuration["Jwt:Issuer"],//Payload
-                _configuration["Jwt:Audience"],//Payload
-                claims,//Payload
-                expires: DateTime.Now.AddMinutes(15),//Payload
-                signingCredentials: credentials); //signature e header(tipo de assinatura)            
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }                  //handler -> processa e valida tokens                                     
+            var jwtToken = new JwtSecurityToken(
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
+                    claims,
+                    signingCredentials: credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        }
     }
 }
