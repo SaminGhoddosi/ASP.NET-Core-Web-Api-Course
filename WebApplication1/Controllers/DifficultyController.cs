@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Contracts;
+using NZWalks.Repositories.Contracts;
 using WebApplication1.CustomActionFilters;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;

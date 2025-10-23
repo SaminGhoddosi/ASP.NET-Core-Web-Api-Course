@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Contracts;
+using NZWalks.Repositories.Contracts;
 using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Controllers

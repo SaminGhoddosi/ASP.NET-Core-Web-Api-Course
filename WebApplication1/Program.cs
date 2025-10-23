@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Contracts;
 using WebApplication1.Data;
 using WebApplication1.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using WebApplication1.Middlewares;
+using NZWalks.Repositories.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);//o que colocar no v1.
 
@@ -22,6 +22,17 @@ var logger = new LoggerConfiguration()
 
 builder.Logging.ClearProviders(); //limpa os provedores padrão do ssit
 builder.Logging.AddSerilog(logger);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+               // policy.WithOrigins("http://localhost:3000") //se fosse um caminho específico
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 
 builder.Services.AddControllers();
@@ -59,7 +70,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
 builder.Services.AddDbContext<NZWalksDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksConnectionString")));
 builder.Services.AddDbContext<NZWalksAuthDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksAuthConnectionString")));
 builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
@@ -105,7 +115,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowFrontend");
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 //Autenticar antes de autorizar

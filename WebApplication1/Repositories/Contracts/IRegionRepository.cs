@@ -1,7 +1,7 @@
 ﻿using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 
-namespace WebApplication1.Contracts
+namespace NZWalks.Repositories.Contracts
 {
     public interface IRegionRepository
     {

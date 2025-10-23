@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using NZWalks.Repositories.Contracts;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebApplication1.Contracts;
 using WebApplication1.Models.DTO;
 
 namespace WebApplication1.Repositories

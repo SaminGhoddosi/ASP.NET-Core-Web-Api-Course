@@ -1,6 +1,6 @@
 ﻿using WebApplication1.Models.Domain;
 
-namespace WebApplication1.Contracts
+namespace NZWalks.Repositories.Contracts
 {
     public interface IDifficultyRepository
     {

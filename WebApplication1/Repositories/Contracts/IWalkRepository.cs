@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models.Domain;
 
-namespace WebApplication1.Contracts
+namespace NZWalks.Repositories.Contracts
 {
     public interface IWalkRepository
     {

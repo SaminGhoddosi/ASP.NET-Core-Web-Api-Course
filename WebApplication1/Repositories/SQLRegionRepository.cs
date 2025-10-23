@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Contracts;
+using NZWalks.Repositories.Contracts;
 using WebApplication1.Data;
 using WebApplication1.Models.Domain;
 

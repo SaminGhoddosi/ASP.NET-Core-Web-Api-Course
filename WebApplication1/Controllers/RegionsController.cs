@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.CustomActionFilters;
-using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using NZWalks.Repositories.Contracts;
 
 namespace WebApplication1.Controllers
 {

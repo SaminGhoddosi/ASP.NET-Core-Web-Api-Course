@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebApplication1.Models.DTO;
 
-namespace WebApplication1.Contracts
+namespace NZWalks.Repositories.Contracts
 {
     public interface ITokenRepository
     {

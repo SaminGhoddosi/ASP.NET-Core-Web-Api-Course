@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.CustomActionFilters;
-using WebApplication1.Contracts;
 using WebApplication1.Models.Domain;
 using WebApplication1.Models.DTO;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using NZWalks.Repositories.Contracts;
 
 namespace WebApplication1.Controllers
 {
