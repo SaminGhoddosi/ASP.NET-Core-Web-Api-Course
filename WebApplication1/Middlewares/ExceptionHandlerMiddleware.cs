@@ -13,7 +13,7 @@ namespace WebApplication1.Middlewares
         }
 
         public async Task InvokeAsync(HttpContext httpContext)//Task pode retornar nada, apenas sinalizar que terminou
-        {//asdfgo
+        {
             try
             {
                 await _next(httpContext); //vai para o próximo middleware
