@@ -29,8 +29,8 @@ namespace WebApplication1.Repositories
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             var jwtToken = new JwtSecurityToken(
-                    _configuration["Jwt:Issuer"],//jgg
-                    _configuration["Jwt:Audience"],
+                    _configuration["Jwt:Issuer"],//jggj
+                    _configuration["Jwt:Audience"],//asdfadsf
                     claims,
                     signingCredentials: credentials
                 );
