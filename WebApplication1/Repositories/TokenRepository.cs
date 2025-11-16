@@ -29,7 +29,7 @@ namespace WebApplication1.Repositories
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             var jwtToken = new JwtSecurityToken(
-                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Issuer"],//jgg
                     _configuration["Jwt:Audience"],
                     claims,
                     signingCredentials: credentials
