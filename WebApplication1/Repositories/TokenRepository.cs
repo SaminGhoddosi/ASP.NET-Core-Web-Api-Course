@@ -33,7 +33,7 @@ namespace WebApplication1.Repositories
                     _configuration["Jwt:Audience"],
                     claims,
                     signingCredentials: credentials
-                );
+                );//sdfsdfsdf
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }
     }
